@@ -1,6 +1,5 @@
-import React from 'react'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
+import React from 'https://esm.sh/react'
+import { Link, useRouter } from 'https://deno.land/x/aleph/mod.ts'
 
 export const HeaderNavLink: React.FC<{ href: string }> = ({
   href,
@@ -9,7 +8,7 @@ export const HeaderNavLink: React.FC<{ href: string }> = ({
   const router = useRouter()
   const active = router.pathname === href
   return (
-    <Link href={href}>
+    <Link to={href}>
       <a
         className={
           (active

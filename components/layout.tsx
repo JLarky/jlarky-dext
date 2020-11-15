@@ -1,13 +1,11 @@
-import classNames from 'classnames'
-import React from 'react'
-import Head from 'next/head'
-import Link from 'next/link'
-import { HeaderNavLink } from './HeaderNavLink'
-import { useRouter } from 'next/router'
+import React from 'https://esm.sh/react'
+import classNames from 'https://esm.sh/classnames'
+import { Head, Link, useRouter } from 'https://deno.land/x/aleph/mod.ts'
+import { HeaderNavLink } from './HeaderNavLink.tsx'
 
 export const siteTitle = 'Yaroslav Lapin'
 
-export default function Layout({
+export function Layout({
   children,
   home
 }: {
@@ -59,6 +57,11 @@ export default function Layout({
         />
         <meta key="og:title" name="og:title" content={siteTitle} />
         <meta name="twitter:card" content="summary_large_image" />
+        {/* until I find better way to include tailwind into deno */}
+        <link
+          href="https://unpkg.com/tailwindcss@2.0.0-alpha.20/dist/tailwind.min.css"
+          rel="stylesheet"
+        />
       </Head>
       <nav
         className={classNames(
@@ -77,7 +80,7 @@ export default function Layout({
         />
         <div className="w-full lg:max-w-4xl mx-auto flex flex-wrap items-center justify-between mt-0 py-3">
           <div className="pl-4">
-            <Link href="/">
+            <Link to="/">
               <a
                 className="text-gray-900 hover:no-underline font-extrabold text-xl"
                 href="/"
@@ -136,7 +139,7 @@ export default function Layout({
                 {router.pathname === '/posts/[id]' && (
                   <>
                     &lt;{' '}
-                    <Link href="/posts">
+                    <Link to="/posts">
                       <a className="text-base md:text-sm text-teal-500 font-bold hover:underline">
                         BACK TO BLOG
                       </a>
