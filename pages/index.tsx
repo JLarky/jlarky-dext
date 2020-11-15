@@ -1,7 +1,6 @@
-import { Head, Link } from 'https://deno.land/x/aleph/mod.ts'
+import { Link } from 'https://deno.land/x/aleph/mod.ts'
 import React, { useState } from 'https://esm.sh/react'
 
-import { Layout, siteTitle } from '../components/layout.tsx'
 // import { getSortedPostsData } from '../lib/posts'
 // import { BlogPosts } from './posts'
 
@@ -15,10 +14,7 @@ export default function Home({
   }[]
 }) {
   return (
-    <Layout home>
-      <Head>
-        <title>{siteTitle}</title>
-      </Head>
+    <>
       <section
         className="w-full px-4 md:px-6 text-xl text-gray-800 leading-normal"
         style={{ fontFamily: 'Georgia,serif' }}
@@ -34,7 +30,7 @@ export default function Home({
       </section>
       {/* <BlogPosts allPostsData={allPostsData} /> */}
       <div className="py-6"> </div>
-    </Layout>
+    </>
   )
 }
 

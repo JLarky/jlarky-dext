@@ -1,7 +1,7 @@
 import { Head, useDeno } from 'https://deno.land/x/aleph/mod.ts'
 import React, { useEffect, useState } from 'https://esm.sh/react'
 
-import { Layout, siteTitle } from '../components/layout.tsx'
+import { siteTitle } from '../components/layout.tsx'
 
 export function Contacts() {
   const lastModified = useDeno(async () => {
@@ -10,7 +10,7 @@ export function Contacts() {
   })
   const [date] = useState(() => new Date(lastModified || 0))
   return (
-    <Layout home>
+    <>
       <Head>
         <title>{siteTitle} contacts</title>
       </Head>
@@ -39,7 +39,7 @@ export function Contacts() {
         </p>
       </section>
       <div className="py-6"></div>
-    </Layout>
+    </>
   )
 }
 
