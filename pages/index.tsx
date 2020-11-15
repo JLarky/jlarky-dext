@@ -1,45 +1,48 @@
-import { Import, useDeno } from "https://deno.land/x/aleph/mod.ts";
-import React, { useState } from "https://esm.sh/react";
-import Logo from "../components/logo.tsx";
+import Head from 'next/head'
+import Layout, { siteTitle } from '../components/layout'
+import { getSortedPostsData } from '../lib/posts'
+import { GetStaticProps } from 'next'
+import Link from 'next/link'
+import { BlogPosts } from './posts'
 
-export default function Home() {
-  const [count, setCount] = useState(0);
-  const version = useDeno(() => {
-    return Deno.version;
-  });
-
+export default function Home({
+  allPostsData
+}: {
+  allPostsData: {
+    date: string
+    title: string
+    id: string
+  }[]
+}) {
   return (
-    <div className="page">
-      <p className="logo">
-        <Logo />
-      </p>
-      <h1>
-        Welcome to use <strong>Aleph.js</strong>!
-      </h1>
-      <p className="links">
-        <a href="https://alephjs.org" target="_blank">
-          Website
-        </a>
-        <span>&middot;</span>
-        <a href="https://alephjs.org/docs/get-started" target="_blank">
-          Get Started
-        </a>
-        <span>&middot;</span>
-        <a href="https://alephjs.org/docs" target="_blank">
-          Docs
-        </a>
-        <span>&middot;</span>
-        <a href="https://github.com/postui/alephjs" target="_blank">
-          GitHub
-        </a>
-      </p>
-      <p className="counter">
-        <span>Counter:</span>
-        <strong>{count}</strong>
-        <button onClick={() => setCount((n) => n - 1)}>-</button>
-        <button onClick={() => setCount((n) => n + 1)}>+</button>
-      </p>
-      <p className="copyinfo">Built by Aleph.js in Deno v{version.deno}</p>
-    </div>
-  );
+    <Layout home>
+      <Head>
+        <title>{siteTitle}</title>
+      </Head>
+      <section
+        className="w-full px-4 md:px-6 text-xl text-gray-800 leading-normal"
+        style={{ fontFamily: 'Georgia,serif' }}
+      >
+        <p>
+          My name is{' '}
+          <Link href="/contacts">
+            <a className="text-gray-900">Yaroslav Lapin</a>
+          </Link>
+          , I do things on the internet. There’re few outdated pages about me
+          and now I'm adding one more!
+        </p>
+      </section>
+      <BlogPosts allPostsData={allPostsData} />
+      <div className="py-6"> </div>
+    </Layout>
+  )
+}
+
+export const getStaticProps: GetStaticProps = async () => {
+  const allPostsData = getSortedPostsData()
+  return {
+    props: {
+      allPostsData
+    }
+  }
 }
