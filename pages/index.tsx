@@ -1,9 +1,9 @@
-import Head from 'next/head'
-import Layout, { siteTitle } from '../components/layout'
-import { getSortedPostsData } from '../lib/posts'
-import { GetStaticProps } from 'next'
-import Link from 'next/link'
-import { BlogPosts } from './posts'
+import { Head, Link } from 'https://deno.land/x/aleph/mod.ts'
+import React, { useState } from 'https://esm.sh/react'
+
+import { Layout, siteTitle } from '../components/layout.tsx'
+// import { getSortedPostsData } from '../lib/posts'
+// import { BlogPosts } from './posts'
 
 export default function Home({
   allPostsData
@@ -25,14 +25,14 @@ export default function Home({
       >
         <p>
           My name is{' '}
-          <Link href="/contacts">
+          <Link to="/contacts">
             <a className="text-gray-900">Yaroslav Lapin</a>
           </Link>
           , I do things on the internet. There’re few outdated pages about me
           and now I'm adding one more!
         </p>
       </section>
-      <BlogPosts allPostsData={allPostsData} />
+      {/* <BlogPosts allPostsData={allPostsData} /> */}
       <div className="py-6"> </div>
     </Layout>
   )
