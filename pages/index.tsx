@@ -1,18 +1,14 @@
-import { Link } from 'https://deno.land/x/aleph/mod.ts'
+import { Link, useDeno } from 'https://deno.land/x/aleph/mod.ts'
 import React, { useState } from 'https://esm.sh/react'
 
-// import { getSortedPostsData } from '../lib/posts'
-// import { BlogPosts } from './posts'
+import { getSortedPostsData } from '../lib/posts.ts'
 
-export default function Home({
-  allPostsData
-}: {
-  allPostsData: {
-    date: string
-    title: string
-    id: string
-  }[]
-}) {
+import { BlogPosts } from './posts.tsx'
+
+export default function Home() {
+  const allPostsData = useDeno(async () => await getSortedPostsData())
+  console.log(allPostsData)
+
   return (
     <>
       <section
@@ -28,17 +24,8 @@ export default function Home({
           and now I'm adding one more!
         </p>
       </section>
-      {/* <BlogPosts allPostsData={allPostsData} /> */}
+      <BlogPosts allPostsData={allPostsData} />
       <div className="py-6"> </div>
     </>
   )
-}
-
-export const getStaticProps: GetStaticProps = async () => {
-  const allPostsData = getSortedPostsData()
-  return {
-    props: {
-      allPostsData
-    }
-  }
 }

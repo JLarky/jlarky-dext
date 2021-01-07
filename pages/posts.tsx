@@ -1,21 +1,32 @@
-import Head from 'next/head'
-import Layout, { siteTitle } from '../components/layout'
-import { getSortedPostsData, PostData, SortedPostsData } from '../lib/posts'
-import Link from 'next/link'
-import Date from '../components/date'
-import { GetStaticProps } from 'next'
+import { Head, useDeno, Link } from 'https://deno.land/x/aleph/mod.ts'
+import React, { ComponentType } from 'https://esm.sh/react'
+
+import { siteTitle } from '../components/layout.tsx'
+
+import { getSortedPostsData, SortedPostsData } from '../lib/posts.ts'
+import Date from '../components/date.tsx'
 
 type Props = { allPostsData: SortedPostsData }
 
-export const Blog: React.FC<Props> = ({ allPostsData }) => {
+export function Blog({
+  //
+  Page
+}: {
+  Page?: ComponentType<any>
+  pageProps?: {}
+}) {
+  const allPostsData = useDeno(async () =>
+    Page ? [] : await getSortedPostsData()
+  )
+
   return (
-    <Layout home={false}>
+    <>
       <Head>
         <title>{siteTitle} &gt; Blog</title>
       </Head>
-      <BlogPosts allPostsData={allPostsData} />
+      {Page ? <Page /> : <BlogPosts allPostsData={allPostsData} />}
       <div className="py-6"> </div>
-    </Layout>
+    </>
   )
 }
 
@@ -29,7 +40,7 @@ export const BlogPosts: React.FC<Props> = ({ allPostsData }) => {
       <ul className="">
         {allPostsData.map(({ id, date, title }) => (
           <li className="" key={id}>
-            <Link href="/posts/[id]" as={`/posts/${id}`}>
+            <Link to={`/posts/${id}`}>
               <a className="underline">{title}</a>
             </Link>
             <br />
@@ -41,15 +52,6 @@ export const BlogPosts: React.FC<Props> = ({ allPostsData }) => {
       </ul>
     </section>
   )
-}
-
-export const getStaticProps: GetStaticProps<Props> = async () => {
-  const allPostsData = getSortedPostsData()
-  return {
-    props: {
-      allPostsData
-    }
-  }
 }
 
 export default Blog

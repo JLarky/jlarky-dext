@@ -1,10 +1,13 @@
-import fs from 'fs'
-import path from 'path'
-import matter from 'gray-matter'
-import remark from 'remark'
-import html from 'remark-html'
+import { walk } from 'https://deno.land/std@0.83.0/fs/mod.ts'
+import {
+  relative,
+  basename,
+  join
+} from 'https://deno.land/std@0.83.0/path/mod.ts'
 
-const postsDirectory = path.join(process.cwd(), 'posts')
+import matter from 'https://jspm.dev/gray-matter' // esm.sh and skypack.dev crash because of `fs`
+import remark from 'https://esm.sh/remark'
+import html from 'https://esm.sh/remark-html'
 
 type MatterData = {
   date: string
@@ -12,26 +15,30 @@ type MatterData = {
   'og:image'?: string
 }
 
-export function getSortedPostsData() {
+type MatterDataWithId = MatterData & { id: string }
+
+export async function getSortedPostsData() {
   // Get file names under /posts
-  const fileNames = fs.readdirSync(postsDirectory)
-  const allPostsData = fileNames.map(fileName => {
+  let allPostsData: MatterDataWithId[] = []
+
+  for await (const entry of walk('./posts', {
+    exts: ['.md'],
+    includeDirs: false
+  })) {
+    const fileName = entry.path
     // Remove ".md" from file name to get id
-    const id = fileName.replace(/\.md$/, '')
+    const id = basename(fileName).replace(/\.md$/, '')
 
     // Read markdown file as string
-    const fullPath = path.join(postsDirectory, fileName)
-    const fileContents = fs.readFileSync(fullPath, 'utf8')
+    const fileContents = await Deno.readTextFile(fileName)
 
     // Use gray-matter to parse the post metadata section
     const matterResult = matter(fileContents)
 
     // Combine the data with the id
-    return {
-      id,
-      ...(matterResult.data as MatterData)
-    }
-  })
+    allPostsData.push({ id, ...matterResult.data })
+  }
+
   // Sort posts by date
   return allPostsData.sort((a, b) => {
     if (a.date < b.date) {
@@ -42,20 +49,14 @@ export function getSortedPostsData() {
   })
 }
 
-export function getAllPostIds() {
-  const fileNames = fs.readdirSync(postsDirectory)
-  return fileNames.map(fileName => {
-    return {
-      params: {
-        id: fileName.replace(/\.md$/, '')
-      }
-    }
-  })
-}
-
 export async function getPostData(id: string) {
-  const fullPath = path.join(postsDirectory, `${id}.md`)
-  const fileContents = fs.readFileSync(fullPath, 'utf8')
+  const filename = `${id}.md`
+  const filePath = join('./posts', filename)
+  if (relative(filePath, './posts/test') !== '../test') {
+    // that most likely means security attack of trying to pass relative path in `id`
+    throw new Error('oopsie poopsie')
+  }
+  const fileContents = await Deno.readTextFile(filePath)
 
   // Use gray-matter to parse the post metadata section
   const matterResult = matter(fileContents)
@@ -77,4 +78,4 @@ export async function getPostData(id: string) {
 type Await<T> = T extends PromiseLike<infer U> ? U : T
 
 export type PostData = Await<ReturnType<typeof getPostData>>
-export type SortedPostsData = ReturnType<typeof getSortedPostsData>
+export type SortedPostsData = MatterDataWithId[]

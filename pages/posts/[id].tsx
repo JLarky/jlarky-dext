@@ -1,23 +1,25 @@
-import React from 'react'
-import Layout from '../../components/layout'
-import { getAllPostIds, getPostData, PostData } from '../../lib/posts'
-import Head from 'next/head'
-import Date from '../../components/date'
-import { GetStaticProps, GetStaticPaths } from 'next'
-import Link from 'next/link'
+import React from 'https://esm.sh/react'
+import {
+  Head,
+  useDeno,
+  Link,
+  useRouter
+} from 'https://deno.land/x/aleph/mod.ts'
+import { getPostData, PostData } from '../../lib/posts.ts'
+import Date from '../../components/date.tsx'
 
-export default function Post({
-  postData,
-  params
-}: {
-  params: { id: string }
-  postData: PostData
-}) {
+export default function Post({}) {
+  const { params } = useRouter()
+
+  const postData = useDeno(async () => await getPostData(params.id))
+
   const tags = []
   const [overrideHtml, setHtml] = React.useState('')
   const html = overrideHtml || postData.contentHtml
 
-  if (process.env.NODE_ENV === 'development') {
+  const isDev = useDeno(() => Deno.env.get('__buildMode') === 'development')
+
+  if (isDev) {
     React.useEffect(() => {
       const loop = async () => {
         const res = await fetch(`/api/getPostData?postId=${params.id}`)
@@ -35,8 +37,9 @@ export default function Post({
       }
     }, [html])
   }
+
   return (
-    <Layout>
+    <>
       <Head>
         <title>{postData.title}</title>
         <meta key="og:title" name="og:title" content={postData.title} />
@@ -100,7 +103,7 @@ export default function Post({
           </p>
         </div>
         <div className="justify-end">
-          <Link href="/posts">
+          <Link to="/posts">
             <a className="bg-transparent border border-gray-500 hover:border-teal-500 text-xs text-gray-500 hover:text-teal-500 font-bold py-2 px-4 rounded-full">
               Read More
             </a>
@@ -140,24 +143,6 @@ export default function Post({
           </div>
         </div>
       )}
-    </Layout>
+    </>
   )
-}
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = getAllPostIds()
-  return {
-    paths,
-    fallback: false
-  }
-}
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const postData = await getPostData(params.id as string)
-  return {
-    props: {
-      postData,
-      params
-    }
-  }
 }

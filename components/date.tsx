@@ -1,4 +1,5 @@
-import { parseISO, format } from 'date-fns'
+import React from 'https://esm.sh/react'
+import { parseISO, format } from 'https://esm.sh/date-fns'
 
 export default function Date({
   dateString,

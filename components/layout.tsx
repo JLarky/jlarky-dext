@@ -136,7 +136,7 @@ export function Layout({
           <div className="font-sans">
             <span className="text-base md:text-sm text-teal-500 font-bold">
               <span>
-                {router.pathname === '/posts/[id]' && (
+                {router.pagePath === '/posts/[id]' && (
                   <>
                     &lt;{' '}
                     <Link to="/posts">
